@@ -1,6 +1,5 @@
 package com.christianscarselli.model;
 
-import java.util.Date;
 
 public class Anagrafe {
 	

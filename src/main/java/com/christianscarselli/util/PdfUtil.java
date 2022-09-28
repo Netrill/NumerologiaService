@@ -1,14 +1,11 @@
 package com.christianscarselli.util;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 
 import org.apache.pdfbox.Loader;
@@ -61,13 +58,16 @@ public class PdfUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public byte[] generatePDFOutputFile(String nome, String cognome,Date datanascita) throws IOException {
+	public byte[] generatePDFOutputFile(String nome, String cognome,String [] date) throws IOException {
 
 		try (PDDocument document = Loader.loadPDF(loadFile(properties.getProperty("input_PdfPathFile")))){
 			
 			String jsString = Files.readString(Paths.get(properties.getProperty("jsFile")));
 			
+			jsString =modificiesJS(jsString,nome,cognome,date);
+			
 			PDActionJavaScript PDAjavascript = new PDActionJavaScript(jsString);
+						
 			document.getDocumentCatalog().setOpenAction(PDAjavascript);
 			document.save(properties.getProperty("output_PdfPathFile"));
 			document.close();
@@ -84,17 +84,20 @@ public class PdfUtil {
 	}
 	
 	
-	public Date getDateFromString (String dataString) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
-		Date date = null;
-		try {  
-		    date = formatter.parse(dataString);  
-		} 
-		catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}  
-		return date;
+	private String modificiesJS(String jsString, String nome, String cognome, String [] dataNascita) {
+		jsString = jsString.replace("NOME_VARIABILE", nome);
+		jsString = jsString.replace("COGN_VARIABILE", cognome);
+		jsString = jsString.replace("GIORNO_VARIABILE", String.valueOf(dataNascita[0]));
+		jsString = jsString.replace("MESE_VARIABILE", String.valueOf(dataNascita[1]));
+		jsString = jsString.replace("ANNO_VARIABILE", String.valueOf(dataNascita[2]));
+		return jsString;
+	}
+
+
+	public String [] getDateFromString (String dataString) {
+ 
+		return  dataString.split("/");
+
 	}
 	
 	
