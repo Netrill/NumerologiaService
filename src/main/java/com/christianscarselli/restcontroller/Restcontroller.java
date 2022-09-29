@@ -74,7 +74,12 @@ public class Restcontroller {
 		    String filename = "ScopriChiSeiIn5Click!.html";
 		    headers.setContentDispositionFormData(filename, filename);
 		    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		    ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
+		    ResponseEntity<byte[]> response;
+		    if (contents==null)
+		    	response = new ResponseEntity<>(contents, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		    else {
+		    	response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
+		    }
 		    return response;
 		    
 	}}

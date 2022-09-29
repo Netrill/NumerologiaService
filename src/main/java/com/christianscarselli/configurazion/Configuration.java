@@ -1,6 +1,5 @@
 package com.christianscarselli.configurazion;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -17,8 +16,8 @@ public class Configuration {
 		Properties properties = new Properties ();
 		InputStream iStream = null;
 	      try { 
-	        iStream = new FileInputStream("./src/main/resources/application.properties");   
-	        properties.load(iStream);
+	    	  iStream = this.getClass().getClassLoader().getResourceAsStream("application.properties")  ;
+	          properties.load(iStream);
 	      } catch (IOException e) {
 	       // TODO Auto-generated catch block
 	       e.printStackTrace();

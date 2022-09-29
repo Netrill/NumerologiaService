@@ -1,18 +1,18 @@
 package com.christianscarselli.util;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionJavaScript;
 
-
+import org.apache.commons.io.FileUtils;
 
 public class PdfUtil {
 	
@@ -24,9 +24,9 @@ public class PdfUtil {
 	}
 	
 	
-	public byte [] loadFile (String filePath) {
+	public byte [] loadFile (String name) {
 		byte [] contents = null;
-		try (FileInputStream iStream = new FileInputStream(filePath)) {
+		try (InputStream iStream = this.getClass().getClassLoader().getResourceAsStream(name)) {
 			contents=iStream.readAllBytes();
 		}catch (IOException e) {
 		    e.printStackTrace();
@@ -54,20 +54,26 @@ public class PdfUtil {
 
 	public byte[] generatePDFOutputFile(String nome, String cognome,String [] date) throws IOException,NullPointerException,FileNotFoundException {
 
-		try (PDDocument document = Loader.loadPDF(loadFile(properties.getProperty("input_PdfPathFile")))){
+		try (PDDocument document = Loader.loadPDF(this.getClass().getClassLoader().getResourceAsStream(properties.getProperty("input_Pdf")))){
+		
+		
+			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(properties.getProperty("jsFile"));
 			
-			String jsString = Files.readString(Paths.get(properties.getProperty("jsFile")));
+			String jsString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 			
 			jsString =modificiesJS(jsString,nome,cognome,date);
 			
 			PDActionJavaScript PDAjavascript = new PDActionJavaScript(jsString);
-						
+			File temporaneypdf = new File("temporaneypdf.pdf");		
 			document.getDocumentCatalog().setOpenAction(PDAjavascript);
-			document.save(properties.getProperty("output_PdfPathFile"));
+			document.save(temporaneypdf);
 			document.close();
+			byte [] contents = FileUtils.readFileToByteArray(temporaneypdf);
+			temporaneypdf.delete();
+			return  contents;
 		}
 		
-		return loadFile(properties.getProperty("output_PdfPathFile"));
+		
 	}
 	
 	

@@ -1,0 +1,11 @@
+--creare il Dockerfile dentro la cartella "target" dopo aver fatto un mvn clean package
+  e incollare le istruzioni sotto
+
+FROM ubuntu
+
+RUN apt-get update && \
+	apt-get install -y openjdk-11-jdk
+	
+COPY NumerologiaService-*.jar /NumerologiaService.jar
+
+CMD ["java", "-jar", "/numerologiaService.jar"]
