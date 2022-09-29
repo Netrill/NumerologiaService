@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +25,12 @@ public class Restcontroller {
 	
 	@Autowired 
 	Properties properties;
+	
+	@Autowired 
+	PdfUtil pdfUtil;
 
-	@PostMapping (consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping (value="/getpdf",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public  ResponseEntity<byte[]> getPDF(@RequestBody Anagrafe anagrafe) {
-			PdfUtil pdfUtil= new PdfUtil(properties);
 		    byte[] contents=null;
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_PDF);
@@ -43,11 +46,32 @@ public class Restcontroller {
 				e.printStackTrace();
 				ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 			    return response;
-			} 
+ 
+		    } catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		    return response;
+		}
 
+		    String filename = "ScopriChiSeiIn5Click!.pdf";
+		    headers.setContentDispositionFormData(filename, filename);
+		    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+		    ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
+		    return response;
 		    
-		    // Here you have to set the actual filename of your pdf
-		    String filename = "output.pdf";
+	}
+
+	@GetMapping (value="/gethtml")
+	public  ResponseEntity<byte[]> getHTML() {
+		
+		    byte[] contents=null;
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.TEXT_HTML);
+			
+			contents = pdfUtil.loadFile(properties.getProperty("htmlfile"));
+				
+		    String filename = "ScopriChiSeiIn5Click!.html";
 		    headers.setContentDispositionFormData(filename, filename);
 		    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 		    ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);

@@ -1,7 +1,7 @@
 package com.christianscarselli.util;
 
 import java.io.FileInputStream;
-
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,14 +51,8 @@ public class PdfUtil {
 		return true;
 	}
 	
-	/** 
-	 * @param nome
-	 * @param cognome
-	 * @param datanascita
-	 * @return
-	 * @throws IOException
-	 */
-	public byte[] generatePDFOutputFile(String nome, String cognome,String [] date) throws IOException {
+
+	public byte[] generatePDFOutputFile(String nome, String cognome,String [] date) throws IOException,NullPointerException,FileNotFoundException {
 
 		try (PDDocument document = Loader.loadPDF(loadFile(properties.getProperty("input_PdfPathFile")))){
 			
@@ -71,16 +65,9 @@ public class PdfUtil {
 			document.getDocumentCatalog().setOpenAction(PDAjavascript);
 			document.save(properties.getProperty("output_PdfPathFile"));
 			document.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-			return null;
 		}
 		
-		return null;
+		return loadFile(properties.getProperty("output_PdfPathFile"));
 	}
 	
 	
@@ -101,4 +88,4 @@ public class PdfUtil {
 	}
 	
 	
-  }
+ }

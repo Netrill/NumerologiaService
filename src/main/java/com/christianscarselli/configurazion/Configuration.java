@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import org.springframework.context.annotation.Bean;
 
+import com.christianscarselli.util.PdfUtil;
+
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 	
@@ -31,6 +33,12 @@ public class Configuration {
 	        }
 	      }
 		return properties;
+		
+	}
+	@Bean
+	public PdfUtil pdfUtils () {
+		
+		return new PdfUtil (properties());
 		
 	}
 }
