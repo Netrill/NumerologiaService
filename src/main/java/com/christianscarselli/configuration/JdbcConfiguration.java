@@ -1,4 +1,4 @@
-package com.christianscarselli.configurazion;
+package com.christianscarselli.configuration;
 
 import java.sql.SQLException;
 
@@ -19,7 +19,7 @@ import com.mchange.v2.c3p0.DriverManagerDataSourceFactory;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan("")
+@ComponentScan("com.christianscarselli.config")
 @PropertySource("classpath:application.properties")
 public class JdbcConfiguration {
 	
@@ -43,14 +43,15 @@ public class JdbcConfiguration {
 	{
 		try {
 					return DriverManagerDataSourceFactory.create(environment.getRequiredProperty("jdbc.driverClassName"),
-					environment.getRequiredProperty("jdbc.url"), environment.getRequiredProperty("jdbc.username"), environment.getRequiredProperty("jdbc.password"));
+					environment.getRequiredProperty("jdbc.url"), environment.getRequiredProperty("jdbc.username"), 
+					environment.getRequiredProperty("jdbc.password"));
 		} catch (IllegalStateException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null; 
 	}
-	
+	/*
 	@Bean
 	public DataSourceTransactionManager transactionManager()
 	{
@@ -59,5 +60,5 @@ public class JdbcConfiguration {
 		
 		return transactionManager;
 	}
-
+	*/
 }

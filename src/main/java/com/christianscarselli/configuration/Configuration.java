@@ -1,4 +1,4 @@
-package com.christianscarselli.configurazion;
+package com.christianscarselli.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
