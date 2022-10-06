@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.christianscarselli.model.Anagrafe;
+import com.christianscarselli.repository.DbAccessImpl;
 import com.christianscarselli.util.PdfUtil;
 
 @RestController
@@ -28,6 +29,9 @@ public class Restcontroller {
 	
 	@Autowired 
 	PdfUtil pdfUtil;
+	
+	@Autowired
+	DbAccessImpl dbAccess;
 
 	@PostMapping (value="/getpdf",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public  ResponseEntity<byte[]> getPDF(@RequestBody Anagrafe anagrafe) {
@@ -36,6 +40,7 @@ public class Restcontroller {
 		    headers.setContentType(MediaType.APPLICATION_PDF);
 			try {
 				contents = pdfUtil.generatePDFOutputFile(anagrafe.getNome(), anagrafe.getCognome(), pdfUtil.getDateFromString(anagrafe.getDataNascita()));
+				dbAccess.select(0);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
