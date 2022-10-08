@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -21,7 +22,8 @@ import static org.hibernate.cfg.Environment.*;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan ("com.christianscarselli.repository")
+@ComponentScan ("com.christianscarselli.")
+@PropertySource("classpath:application.properties")
 public class HibernateConfig {
 	
 	@Autowired
@@ -36,7 +38,7 @@ public class HibernateConfig {
 		
 		factory.setJpaVendorAdapter(this.jpaVendorAdapter());
 		factory.setJtaDataSource(dataSource);
-		factory.setPackagesToScan("com.christianscarselli.model");
+		factory.setPackagesToScan("com.christianscarselli.entities");
 		factory.setJpaProperties(this.hibernateProperties());
 		factory.setSharedCacheMode(SharedCacheMode.ENABLE_SELECTIVE);
 		factory.setValidationMode(ValidationMode.NONE);
