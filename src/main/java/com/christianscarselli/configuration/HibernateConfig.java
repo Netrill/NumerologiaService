@@ -12,6 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,7 +24,7 @@ import static org.hibernate.cfg.Environment.*;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan ("com.christianscarselli.")
+@ComponentScan ("com.christianscarselli.entities")
 @PropertySource("classpath:application.properties")
 public class HibernateConfig {
 	
@@ -33,55 +35,33 @@ public class HibernateConfig {
 	private DataSource dataSource;
 	
 	@Bean
-	LocalContainerEntityManagerFactoryBean entityManagerFactory () {
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		
-		factory.setJpaVendorAdapter(this.jpaVendorAdapter());
-		factory.setJtaDataSource(dataSource);
-		factory.setPackagesToScan("com.christianscarselli.entities");
-		factory.setJpaProperties(this.hibernateProperties());
-		factory.setSharedCacheMode(SharedCacheMode.ENABLE_SELECTIVE);
-		factory.setValidationMode(ValidationMode.NONE);
-		
-		return factory;
-		
-	}
-	
-	@Bean
-	public JpaVendorAdapter jpaVendorAdapter() {
-		HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-		hibernateJpaVendorAdapter.setShowSql(true);
-		hibernateJpaVendorAdapter.setGenerateDdl(false);
-		hibernateJpaVendorAdapter.setDatabasePlatform(env.getRequiredProperty("hibernate.dialect"));
-		return hibernateJpaVendorAdapter;
-		
-	}
-	
-	private Properties hibernateProperties () {
-		Properties jpaProperties = new Properties();
-		
-		jpaProperties.put("javax.persistence.schema-generation.database.action", "none");
-		jpaProperties.put("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
-		jpaProperties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
-		jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
+    public LocalSessionFactoryBean sessionFactory() {
+	    LocalSessionFactoryBean factoryBean=new LocalSessionFactoryBean();
+	    factoryBean.setDataSource(dataSource);
+	    factoryBean.setPackagesToScan("com.christianscarselli.entities");
+	    factoryBean.setHibernateProperties(additionalProperties());
+	    return factoryBean;
+    }
 
-		// Setting C3P0 properties
-		jpaProperties.put(C3P0_MIN_SIZE, env.getProperty("hibernate.c3p0.min_size"));
-		jpaProperties.put(C3P0_MAX_SIZE, env.getProperty("hibernate.c3p0.max_size"));
-		jpaProperties.put(C3P0_ACQUIRE_INCREMENT, env.getProperty("hibernate.c3p0.acquire_increment"));
-		jpaProperties.put(C3P0_TIMEOUT, env.getProperty("hibernate.c3p0.timeout"));
-		jpaProperties.put(C3P0_MAX_STATEMENTS, env.getProperty("hibernate.c3p0.max_statements"));
-		
-		return jpaProperties;
+	private Properties additionalProperties() {
+		Properties properties=new Properties();
+		properties.put("hibernate.dialect", org.hibernate.dialect.SQLServerDialect.class);
+		properties.put("hibernate.show_sql", Boolean.TRUE);
+		properties.put("hibernate.format_sql", Boolean.TRUE);
+		properties.put("use_sql_comments", Boolean.TRUE);
+		properties.put("default_batch_fetch_size", 10);
+		properties.put("hibernate.hbm2ddl.auto", "update");
+		//properties.put("hibernate.cache.use_second_level_cache", Boolean.TRUE);
+		//properties.put("hibernate.cache.use_query_cache", Boolean.TRUE);
+		//properties.put("hibernate.cache.region.factory_class",EhCacheRegionFactory.class);
+		return properties;
 	}
-	
+
 	@Bean
-	public JpaTransactionManager transactionManager()
-	{
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
-		
-		return transactionManager;
+	public HibernateTransactionManager transactionManager() {
+		HibernateTransactionManager txManager = new HibernateTransactionManager();
+		txManager.setSessionFactory(sessionFactory().getObject());
+		return txManager;
 	}
 
 }

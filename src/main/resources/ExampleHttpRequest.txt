@@ -1,0 +1,5 @@
+Per ricevere il file html:
+localhost:8080/api/gethtml?email=christian.scarselli1986@gmail.com&nome=christian&cognome=scarselli&datanascita=05/05/1986
+
+Per ricevere il file PDF:
+localhost:8080/api/getpdf utilizzando postman e settendo nel body le 4 variabili in JSON, risponderà in JSON

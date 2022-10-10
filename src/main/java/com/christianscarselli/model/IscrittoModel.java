@@ -1,8 +1,9 @@
 package com.christianscarselli.model;
 
 
-public class Anagrafe {
+public class IscrittoModel {
 	
+	private String email;
 	private String nome;
 	private String cognome;
 	private String dataNascita;
@@ -25,6 +26,13 @@ public class Anagrafe {
 	public void setDataNascita(String dataNascita) {
 		this.dataNascita = dataNascita;
 	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	
 	
 }
