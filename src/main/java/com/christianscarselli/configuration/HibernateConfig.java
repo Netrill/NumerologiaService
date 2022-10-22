@@ -46,11 +46,11 @@ public class HibernateConfig {
 	private Properties additionalProperties() {
 		Properties properties=new Properties();
 		properties.put("hibernate.dialect", org.hibernate.dialect.SQLServerDialect.class);
-		properties.put("hibernate.show_sql", Boolean.TRUE);
-		properties.put("hibernate.format_sql", Boolean.TRUE);
-		properties.put("use_sql_comments", Boolean.TRUE);
-		properties.put("default_batch_fetch_size", 10);
-		properties.put("hibernate.hbm2ddl.auto", "update");
+		properties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+		properties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
+		properties.put("use_sql_comments", env.getProperty("use_sql_comments"));
+		properties.put("default_batch_fetch_size", env.getProperty("default_batch_fetch_size"));
+		properties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
 		//properties.put("hibernate.cache.use_second_level_cache", Boolean.TRUE);
 		//properties.put("hibernate.cache.use_query_cache", Boolean.TRUE);
 		//properties.put("hibernate.cache.region.factory_class",EhCacheRegionFactory.class);

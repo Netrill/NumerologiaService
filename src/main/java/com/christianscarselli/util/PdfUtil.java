@@ -6,24 +6,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionJavaScript;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.apache.commons.io.FileUtils;
-
+@PropertySource("classpath:application.properties")
 public class PdfUtil {
 	
-	private Properties properties;
+	@Autowired
+	Environment env;
 	
 	
-	public PdfUtil (Properties properties) {
-		this.properties=properties;
+	public PdfUtil() {
+		// TODO Auto-generated constructor stub
 	}
-	
-	
+
+
 	public byte [] loadFile (String name) {
 		byte [] contents = null;
 		try (InputStream iStream = this.getClass().getClassLoader().getResourceAsStream(name)) {
@@ -38,7 +40,7 @@ public class PdfUtil {
 	  }
 	
 	public boolean writeFile (String name,byte [] contents) {
-		try (FileOutputStream stream = new FileOutputStream(properties.getProperty(name))) {
+		try (FileOutputStream stream = new FileOutputStream(env.getProperty(name))) {
 		    stream.write(contents);		    
 		}catch (IOException e) {
 		       e.printStackTrace();
@@ -54,10 +56,10 @@ public class PdfUtil {
 
 	public byte[] generatePDFOutputFile(String nome, String cognome,String [] date) throws IOException,NullPointerException,FileNotFoundException {
 
-		try (PDDocument document = Loader.loadPDF(this.getClass().getClassLoader().getResourceAsStream(properties.getProperty("input_Pdf")))){
+		try (PDDocument document = Loader.loadPDF(this.getClass().getClassLoader().getResourceAsStream(env.getProperty("input_Pdf")))){
 		
 		
-			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(properties.getProperty("jsFile"));
+			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(env.getProperty("jsFile"));
 			
 			String jsString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 			

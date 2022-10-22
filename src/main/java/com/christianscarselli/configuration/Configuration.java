@@ -1,16 +1,12 @@
 package com.christianscarselli.configuration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.springframework.context.annotation.Bean;
 
 import com.christianscarselli.util.PdfUtil;
 
 @org.springframework.context.annotation.Configuration
 public class Configuration {
-	
+	/*
 	@Bean
 	public Properties properties () {
 		Properties properties = new Properties ();
@@ -33,11 +29,11 @@ public class Configuration {
 	      }
 		return properties;
 		
-	}
+	}*/
 	@Bean
 	public PdfUtil pdfUtils () {
 		
-		return new PdfUtil (properties());
+		return new PdfUtil ();
 		
 	}
 }
